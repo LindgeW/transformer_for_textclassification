@@ -8,7 +8,7 @@ The demo apply transformer decoder to finish text classification task. Actually,
 
 + Adam optimization with learning rate of 1.5e-4 (1e-4 magnitude) and learning rate decay schedule with exponential decay of each epoch. If lr is set larger(1e-3 magnitude), the result is not well.
 
-+ I try to add a BiLSTM layer on th top of transformer decoder, but get a worse result. I personally think it's due to dismatch learning rate between decoder layer and lstm layer, which make it hard to fine tune their parameters well simultaneously. And, it further confirms a fact that **'unsupervised pre-training + supervised fine-tuning'** mode is effective and well done nowadays.
++ I try to add a BiLSTM layer on th top of transformer decoder, but get a worse result. I personally think it's due to dismatch learning rate between decoder layer and lstm layer, which make it hard to fine tune their parameters well simultaneously. And, it further confirms a fact that **"unsupervised pre-training + supervised fine-tuning"** mode is effective and well done nowadays.
 
 + For activation function, GeLU seems works worse than ReLU (maybe due to limited corpus).
 
