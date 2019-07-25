@@ -4,7 +4,7 @@
 <img src="imgs/trans_structure.png"/>
 
 ## Fine-tune Tricks
-The demo apply transformer decoder to finish text classification task. Actually, it's hard to adjust the parameter value of model to proper one. Here, I draw a brief conclusion for how to effectively fine-tune the transformer encoder.
+The demo apply transformer decoder to finish text classification task. Actually, it's hard to adjust the parameter value of model to proper one. Here, I draw a brief conclusion for how to effectively fine-tune the parameters.
 
 + Adam optimization with learning rate of 1.5e-4 (1e-4 magnitude) and learning rate decay schedule with exponential decay of each epoch. If lr is set larger(1e-3 magnitude), the result is not well.
 
