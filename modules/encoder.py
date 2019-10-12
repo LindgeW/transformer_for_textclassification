@@ -79,10 +79,9 @@ class Encoder(nn.Module):
 
         self._drop_embed = nn.Dropout(args.dropout)
 
-    def forward(self, inputs, pos_seqs):
+    def forward(self, inputs):
         '''
         :param inputs: [bz, seq_len]
-        :param pos_seqs: [bz, seq_len]
         :return:
         '''
         # 填充部分的mask(uint8类型)
@@ -92,7 +91,8 @@ class Encoder(nn.Module):
         # non_pad_mask = inputs.ne(self._pad).float().unsqueeze(-1)  # 非
 
         wd_embed = self._wd_embed(inputs)
-        pos_embed = self._pos_embed(pos_seqs)
+        seq_range = torch.arange(inputs.size(1), dtype=torch.long, device=inputs.device).unsqueeze(dim=0)
+        pos_embed = self._pos_embed(seq_range)
         # [bz, seq_len, d_model]
         input_embed = wd_embed + pos_embed
         # input_embed = torch.cat((wd_embed, pos_embed), dim=-1)

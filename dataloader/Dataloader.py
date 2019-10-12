@@ -21,10 +21,9 @@ def load_dataset(path):
 
 # 封装Batch
 class Batch(object):
-    def __init__(self, src, target, pos):
+    def __init__(self, src, target):
         self.src = src          # 数据
         self.target = target    # 标签
-        self.pos = pos          # 位置信息
 
 
 def batch_iter(dataset, batch_size, wd_vocab, shuffle=True, device=torch.device('cpu')):
@@ -50,14 +49,12 @@ def batch_gen(batch_data, wd_vocab, device=torch.device('cpu')):
 
     wd_idx = torch.zeros((batch_size, max_seq_len), dtype=torch.long).to(device)
     lbl_idx = torch.zeros(batch_size, dtype=torch.long).to(device)
-    pos_idx = torch.zeros(batch_size, max_seq_len, dtype=torch.long).to(device)
     for i, inst in enumerate(batch_data):
         seq_len = len(inst.words)
         wd_idx[i, :seq_len] = torch.tensor(wd_vocab.extwd2idx(inst.words))
         lbl_idx[i] = torch.tensor(wd_vocab.label2index(inst.label))
-        pos_idx[i, :seq_len] = torch.arange(1, seq_len+1)  # 1, 2, 3, ..., seq_len
 
-    return Batch(wd_idx, lbl_idx, pos_idx)
+    return Batch(wd_idx, lbl_idx)
 
 # class BatchIter(object):
 #     def __init__(self, dataset):

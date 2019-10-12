@@ -69,7 +69,7 @@ class Classifier(object):
                 # 梯度初始化（置0）
                 self._model.zero_grad()
                 # 前向传播（数据喂给模型）
-                pred = self._model(batch.src, batch.pos)
+                pred = self._model(batch.src)
                 # 反向传播BP，计算误差
                 loss = self._calc_loss(pred, batch.target)
                 train_loss += loss.data.item()
@@ -105,7 +105,7 @@ class Classifier(object):
         self._model.eval()  # self.training置成False
         with torch.no_grad():
             for batch in batch_iter(dev_data, self._args.batch_size, self._vocab, device=self._args.device):
-                pred = self._model(batch.src, batch.pos)
+                pred = self._model(batch.src)
                 loss = self._calc_loss(pred, batch.target)
                 dev_loss += loss.data.item()
                 dev_acc += self._calc_acc(pred, batch.target)
@@ -118,7 +118,7 @@ class Classifier(object):
         test_acc, test_loss = 0, 0
         self._model.eval()  # self.training置成False
         for batch in batch_iter(test_data, self._args.batch_size, self._vocab, device=self._args.device):
-            pred = self._model(batch.src, batch.pos)
+            pred = self._model(batch.src)
             loss = self._calc_loss(pred, batch.target)
             test_loss += loss.data.item()
             test_acc += self._calc_acc(pred, batch.target)
