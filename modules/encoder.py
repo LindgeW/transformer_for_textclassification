@@ -58,7 +58,8 @@ class Encoder(nn.Module):
         # self._pos_embed.weight.data[1:].copy_(pe(torch.arange(1, 100)))
         # self._pos_embed.weight.requires_grad = False
 
-        self._pos_embed = nn.Embedding.from_pretrained(PositionEmbed(100, args.d_model, pad_idx=0))
+        self._pos_embed = nn.Embedding.from_pretrained(
+            torch.from_numpy(PositionEmbed(100, args.d_model, pad_idx=0)))
 
         self._encoder_stack = nn.ModuleList([
             EncoderLayer(args.d_model, args.d_k, args.d_v, args.d_ff, args.nb_heads, args.dropout)

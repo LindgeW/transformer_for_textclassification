@@ -8,7 +8,6 @@ class SelfAttention(nn.Module):
     def __init__(self, dropout=0.1):
         super(SelfAttention, self).__init__()
         # self._dropout = dropout
-        self._inf = -1000
         self._dropout = nn.Dropout(dropout)
 
     def forward(self, q, k, v, pad_mask=None):
@@ -25,7 +24,7 @@ class SelfAttention(nn.Module):
         att_weights /= math.sqrt(k.size(-1))
 
         if pad_mask is not None:
-            att_weights.masked_fill_(pad_mask, self._inf)
+            att_weights.masked_fill_(pad_mask, float('-inf'))
 
         # [bz, len_q, len_k]
         soft_att_weights = F.softmax(att_weights, dim=2)
