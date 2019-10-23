@@ -47,19 +47,16 @@ class Encoder(nn.Module):
         self._pad = args.pad  # 序列填充值
 
         # word embedding
+        word_dim = embedding_weights.shape[1]
         self._wd_embed = nn.Embedding.from_pretrained(torch.from_numpy(embedding_weights))
 
         # position embedding
-        # pe = PositionEmbedding(args.d_model)
-        # # self._pos_embed = nn.Embedding.from_pretrained()
-        # self._pos_embed = nn.Embedding(num_embeddings=100,
-        #                                embedding_dim=args.d_model,
-        #                                padding_idx=0)  # pad部分向量为0
-        # self._pos_embed.weight.data[1:].copy_(pe(torch.arange(1, 100)))
-        # self._pos_embed.weight.requires_grad = False
-
-        self._pos_embed = nn.Embedding.from_pretrained(
-            torch.from_numpy(PositionEmbed(100, args.d_model, pad_idx=0)))
+        self._pos_embed = nn.Embedding(num_embeddings=args.max_pos_embeddings,
+                                       embedding_dim=args.d_model,
+                                       padding_idx=0)
+        if args.use_sin_pos:
+            self._pos_embed.weight.data.copy_(torch.from_numpy(PositionEmbed(args.max_pos_embeddings, args.d_model, pad_idx=0)))
+            self._pos_embed.weight.requires_grad = False
 
         self._encoder_stack = nn.ModuleList([
             EncoderLayer(args.d_model, args.d_k, args.d_v, args.d_ff, args.nb_heads, args.dropout)
@@ -80,6 +77,9 @@ class Encoder(nn.Module):
 
         self._drop_embed = nn.Dropout(args.dropout)
 
+        self.wd_norm = nn.LayerNorm(word_dim)
+        self.pos_norm = nn.LayerNorm(word_dim)
+
     def forward(self, inputs):
         '''
         :param inputs: [bz, seq_len]
@@ -94,9 +94,9 @@ class Encoder(nn.Module):
         wd_embed = self._wd_embed(inputs)
         seq_range = torch.arange(inputs.size(1), dtype=torch.long, device=inputs.device).unsqueeze(dim=0)
         pos_embed = self._pos_embed(seq_range)
+        wd_embed, pos_embed = self.wd_norm(wd_embed), self.pos_norm(pos_embed)
         # [bz, seq_len, d_model]
         input_embed = wd_embed + pos_embed
-        # input_embed = torch.cat((wd_embed, pos_embed), dim=-1)
 
         if self.training:
             input_embed = self._drop_embed(input_embed)

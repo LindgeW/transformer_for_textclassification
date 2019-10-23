@@ -88,11 +88,11 @@ class MultiHeadAttention(nn.Module):
         pad_mask = pad_mask.unsqueeze(1).expand((-1, q.size(1), -1))
         for linear_q, linear_k, linear_v in zip(self._linear_qs, self._linear_ks, self._linear_vs):
             # [bz, len_q, d_k]
-            q_fc = linear_q(self._layer_norm(q))
+            q_fc = linear_q(q)
             # [bz, len_k, d_k]
-            k_fc = linear_k(self._layer_norm(k))
+            k_fc = linear_k(k)
             # [bz, len_v, d_v]
-            v_fc = linear_v(self._layer_norm(v))
+            v_fc = linear_v(v)
             # [bz, len_q, d_v]
             head = self._self_attention(q_fc, k_fc, v_fc, pad_mask)
             heads.append(head)
@@ -105,8 +105,7 @@ class MultiHeadAttention(nn.Module):
 
         # multi_head = F.dropout(multi_head, p=self._dropout, training=self.training)
 
-        # return self._layer_norm(residual + multi_head)
-        return residual + multi_head
+        return self._layer_norm(residual + multi_head)
 
 
 # class MultiHeadAttention(nn.Module):
@@ -147,11 +146,11 @@ class MultiHeadAttention(nn.Module):
 #         bz, len_k, _ = k.size()
 #         bz, len_v, _ = v.size()
 #         # [bz, len_q, d_k * nb_heads]
-#         q_fc = self._linear_qs(self._layer_norm(q))
+#         q_fc = self._linear_qs(q)
 #         # [bz, len_k, d_k * nb_heads]
-#         k_fc = self._linear_ks(self._layer_norm(k))
+#         k_fc = self._linear_ks(k)
 #         # [bz, len_v, d_v * nb_heads]
-#         v_fc = self._linear_vs(self._layer_norm(v))
+#         v_fc = self._linear_vs(v)
 #
 #         # [bz, len_q, d_k, nb_heads] -> [bz, nb_heads, len_q, d_k] -> [bz*nb_heads, len_q, d_k]
 #         q_in = q_fc.reshape(bz, len_q, self._d_k, -1).permute(0, 3, 1, 2).reshape(-1, len_q, self._d_k)
@@ -173,5 +172,4 @@ class MultiHeadAttention(nn.Module):
 #
 #         # multi_head = F.dropout(multi_head, p=self._dropout, training=self.training)
 #
-#         # return self._layer_norm(residual + multi_head)
-#         return residual + multi_head
+#         return self._layer_norm(residual + multi_head)

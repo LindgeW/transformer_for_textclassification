@@ -22,18 +22,14 @@ def arg_conf():
     parser.add_argument("--weight_decay", type=float, default=1e-7, help="weight decay when update")
 
     # 模型参数
-    # parser.add_argument("--d_model", type=int, default=512, help='sub-layer feature size')
-    # parser.add_argument("--d_k", type=int, default=64, help='Query or Key feature size')
-    # parser.add_argument("--d_v", type=int, default=64, help='Value feature size')
-    # parser.add_argument("--dff", type=int, default=2048, help='pwffn inner-layer feature size')
-    # parser.add_argument("--nb_heads", type=int, default=8, help='sub-layer feature size')
-
     parser.add_argument("--d_model", type=int, default=300, help='sub-layer feature size')
     parser.add_argument("--d_k", type=int, default=50, help='Query or Key feature size')
     parser.add_argument("--d_v", type=int, default=50, help='Value feature size')
     parser.add_argument("--d_ff", type=int, default=1024, help='pwffn inner-layer feature size')
     parser.add_argument("--nb_heads", type=int, default=6, help='sub-layer feature size')
     parser.add_argument("--encoder_layer", type=int, default=1, help='the number of encoder layer')
+    parser.add_argument("--use_sin_pos", type=bool, default=True, help='use sine & cosine position embedding')
+    parser.add_argument("--max_pos_embeddings", type=int, default=200, help='max position embeddings')
 
     parser.add_argument("--dropout", type=float, default=0.1, help="drop out value")
 
